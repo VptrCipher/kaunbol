@@ -1,0 +1,17 @@
+.env
+.env.*
+.git
+.github
+.venv
+**/__pycache__
+**/*.pyc
+data/family.json
+**/*.db
+**/*.db-*
+**/*.wav
+**/*.ogg
+**/*.opus
+**/*.mp3
+**/*.m4a
+**/*.webm
+**/*.flac

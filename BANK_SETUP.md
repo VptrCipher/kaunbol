@@ -1,5 +1,30 @@
 # Kaun Bol bank demo
 
+## Vercel rehearsal deployment
+
+Import the repository with **Root Directory `./`** and the **FastAPI** preset.
+`main.py` exports the app from the repository root, `requirements.txt` includes
+the backend dependencies, and `.python-version` selects Python 3.12. Leave the
+Build Command and Output Directory at their defaults.
+
+Set `DEMO_MODE=1` and a strong `AGENT_PIN` in Vercel's environment settings.
+The PIN is required when using agent APIs. Configure secret values in Vercel;
+`.vercelignore` excludes local environment files and private runtime inputs.
+
+This is a **temporary demo**, not a durable banking deployment. On Vercel,
+runtime JSON and SQLite files use the temporary directory, while active
+transactions, confirmations and calls remain in process memory. State can
+disappear on restarts or differ across instances; lost-device reports and
+enrollments are not reliably retained. Do not use real customer data or rely
+on this deployment for approvals. Full deployment requires shared persistent
+storage and transaction/session coordination. Large audio uploads are also
+subject to Vercel's request-body limit.
+
+For live providers, follow the sections below after resolving durable storage.
+Customer confirmation still requires the separate customer origin and route
+restrictions described below; using the agent hostname as `CONFIRM_BASE_URL`
+would hide its agent routes.
+
 ## Run on Windows
 
 From the extracted `kaunbol` folder, run these in PowerShell:
