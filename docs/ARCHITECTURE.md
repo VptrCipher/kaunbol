@@ -1,8 +1,28 @@
 # Architecture
 
-[Home](../README.md) · [Backend guide](../backend/README.md) · [Frontend guide](../frontend/README.md) · [Setup](../BANK_SETUP.md)
+[Home](../README.md) · [Setup](../BANK_SETUP.md) · [Benchmark](../BENCHMARK.md)
 
 Kaun Bol runs one FastAPI process that serves an agent console, a separate customer confirmation surface, HTTP APIs, and the live audio WebSocket. The browser app uses plain JavaScript and CSS; there is no frontend build step.
+
+## Code map
+
+- `backend/app.py`: routes, access checks, request validation, enrollment, transaction orchestration and static assets.
+- `backend/detectif.py` and `backend/live.py`: recorded and streaming voice verification, provider calls and labelled demo responses.
+- `backend/transactions.py`, `backend/confirm.py`, `backend/challenge.py`: transaction revisions, confirmation lifecycles and spoken challenges.
+- `backend/stepup.py`: Google transcription, SMTP, Twilio messaging and Verify.
+- `backend/registry.py`: SQLite incidents, number status, device reports and OTP reservations.
+- `backend/identify.py`, `backend/verdict.py`, `backend/scam_script.py`, `backend/fingerprint.py`, `backend/botguard.py`: identity resolution, risk, replay and challenge signals.
+- `backend/benchmark.py`, `backend/benchmark_gen.py`, `backend/report.py`: evaluation and evidence exports.
+- `frontend/index.html` and `frontend/app.js`: agent console and its workflows.
+- `frontend/confirm.html` and `frontend/verify.html`: customer confirmation and outbound caller verification.
+- `frontend/audio.js`, `frontend/i18n.js`, `frontend/styles.css`: recording helpers, English/Hindi/Kannada text and shared design.
+- `frontend/sw.js`: app-shell caching and shared-audio handoff.
+
+## UI motion
+
+Panels and newly inserted verdict cards enter with a short fade and vertical movement. Cards use a brief stagger, and buttons respond to hover and press. Live and recording indicators follow runtime state; animations do not change verification outcomes. `prefers-reduced-motion: reduce` disables animations and transitions while retaining text and color status cues. Hover movement is limited to fine-pointer devices.
+
+Microphone access requires localhost or HTTPS. Browser speech recognition and system-audio capture depend on browser and device support. Run the backend to use the UI; local HTML files alone cannot provide the API or audio flows.
 
 ## System map
 

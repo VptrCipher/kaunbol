@@ -11,7 +11,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?logo=javascript&logoColor=black)
 ![Prototype](https://img.shields.io/badge/Status-Prototype-B38351)
 
-[Quick start](#start-the-app-on-windows) · [Architecture](docs/ARCHITECTURE.md) · [Live setup](BANK_SETUP.md) · [Validation](BANK_DEMO.md) · [Contributing](CONTRIBUTING.md)
+[Quick start](#start-the-app-on-windows) · [Architecture](docs/ARCHITECTURE.md) · [Live setup](BANK_SETUP.md) · [Benchmark](BENCHMARK.md)
 
 </div>
 
@@ -46,10 +46,10 @@ Read the [architecture guide](docs/ARCHITECTURE.md) for the full component map, 
 
 ## Explore the repository
 
-- [Backend](backend/README.md): API, providers, state and tests.
-- [Frontend](frontend/README.md): UI structure, motion and browser checks.
+- `backend/`: FastAPI APIs, provider clients, transaction state and tests.
+- `frontend/`: browser UI, audio helpers, translations and shared styles.
 - [Bank setup](BANK_SETUP.md): live providers, OTP, HTTPS and device rehearsal.
-- [Validation notes](BANK_DEMO.md): prior checks and remaining device tests.
+- [Architecture](docs/ARCHITECTURE.md): component map, approval sequence and module guide.
 - [Benchmark](BENCHMARK.md): saved results and how to evaluate consented inputs.
 - [Private data](data/README.md): runtime files intentionally excluded from Git.
 
@@ -84,7 +84,11 @@ Open http://127.0.0.1:8003. For live checks, set `DEMO_MODE=0` and configure `DE
 
 Aletheia checks for synthetic audio. Eidos checks the selected voice profile. For transaction approval, the server requires all three challenge words, a speaker match and an explicit real-voice result. Live mode transcribes the submitted recording through Google Speech-to-Text; demo mode uses the browser transcript and labels its voice checks simulated. A banking deployment would also need an authenticated customer channel. The browser link is a prototype handoff and must be shared manually. Call dialling is separate. Keep both voice clips and the labels for test cases out of public source control.
 
-Run tests from `backend` with `python -m unittest discover -s tests`. See [bank build notes](BANK_DEMO.md) for validation status and [benchmark notes](BENCHMARK.md) for the prior saved results.
+## Validation and contributing
+
+Run tests from `backend` with `python -m unittest discover -s tests`. The published baseline passed 81 backend tests locally and in GitHub Actions. Browser checks covered desktop and 375 px transaction layouts, panel animation, the reduced-motion CSS override, and console errors. Real phone audio, live providers, and native-language review still require separate rehearsals.
+
+For changes, describe the visible behavior and how you verified it. Check keyboard focus, disabled controls, mobile layouts and reduced-motion behavior after UI changes. Keep credentials, enrolled customer metadata, databases and consented recordings outside Git. See [benchmark notes](BENCHMARK.md) for the prior saved results and evaluation instructions.
 
 <!-- benchmark-summary:start -->
 The bundled live snapshot records 5/5 voice decisions and 5/5 speaker decisions across 5 labelled cases. See [BENCHMARK.md](BENCHMARK.md) for the conditions and limitations.
