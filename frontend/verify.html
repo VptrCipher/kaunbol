@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Is my bank calling me?</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+    body { background: #0f3d5c; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 24px 12px; }
+    .phone { width: 100%; max-width: 400px; background: var(--paper); border-radius: 26px; padding: 22px 18px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+    .bankrow { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #0f3d5c; }
+    .bankrow .b { width: 34px; height: 34px; border-radius: 9px; background: #0f3d5c; color: #f4b860; display: grid; place-items: center; }
+    .box { margin-top: 16px; background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 16px; }
+    .box h1 { font-size: 1.25rem; margin: 0 0 6px; }
+    .box.bad { border-color: var(--high); background: var(--high-bg); }
+    .box.good { border-color: var(--low); background: var(--low-bg); }
+    .box.wait { border-color: var(--saffron-d); }
+    .meta { color: var(--ink-2); font-size: .92rem; }
+    .big { display: block; width: 100%; padding: 15px; margin-top: 12px; font: inherit; font-size: 1.05rem; font-weight: 800; border-radius: 14px; border: 0; cursor: pointer; background: #0f3d5c; color: #fff; }
+    .icon { font-size: 2.6rem; text-align: center; }
+    .tiny { font-size: .78rem; color: var(--ink-2); text-align: center; margin-top: 16px; }
+  </style>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#1d2a44" />
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
+</head>
+<body>
+  <div class="phone">
+    <div class="bankrow"><span class="b">₹</span><span>Your Bank · Secure app</span></div>
+    <div id="view"></div>
+    <p class="tiny" id="foot"></p>
+  </div>
+  <script src="/static/audio.js"></script>
+  <script>
+  (function () {
+    const T = {
+      en: { again: "Check again", q: "Getting a call from “your bank”?", qsub: "Check here before you share anything.", check: "Is my bank calling me?",
+            no: "Your bank is NOT calling you right now.", nosub: "Hang up. Never share OTP, PIN or card details. If unsure, call the number on the back of your card.",
+            yes: "Your bank has an active call to you", agent: "Agent", since: "Started",
+            ask: "To be sure the voice is really them, ask the agent to say this out loud:", rec: "Record the agent", stop: "Stop",
+            verify: "Verify the agent", checking: "Checking…",
+            ok: "Verified: this is {agent} from Your Bank.", oksub: "The agent's voice matched our records and the call is active.",
+            bad: "Could not verify this caller.", badsub: "Hang up and call the number on the back of your card.",
+            foot: "Only your bank's app can see active calls to you.", sim: "SIMULATED" },
+      hi: { again: "फिर से जाँचें", q: "क्या “आपके बैंक” से कॉल आई है?", qsub: "कुछ भी बताने से पहले यहाँ जाँचें।", check: "क्या मेरा बैंक मुझे कॉल कर रहा है?",
+            no: "आपका बैंक अभी आपको कॉल नहीं कर रहा है।", nosub: "फ़ोन काटें। OTP, PIN या कार्ड की जानकारी कभी न दें। शक हो तो कार्ड के पीछे लिखे नंबर पर कॉल करें।",
+            yes: "आपके बैंक की आपसे एक चालू कॉल है", agent: "एजेंट", since: "शुरू",
+            ask: "यह पक्का करने के लिए कि आवाज़ उन्हीं की है, एजेंट से यह ज़ोर से बोलने को कहें:", rec: "एजेंट को रिकॉर्ड करें", stop: "रोकें",
+            verify: "एजेंट की पुष्टि करें", checking: "जाँच रहे हैं…",
+            ok: "पुष्टि हुई: यह आपके बैंक से {agent} हैं।", oksub: "एजेंट की आवाज़ हमारे रिकॉर्ड से मिली और कॉल चालू है।",
+            bad: "इस कॉलर की पुष्टि नहीं हो सकी।", badsub: "फ़ोन काटें और कार्ड के पीछे लिखे नंबर पर कॉल करें।",
+            foot: "आपसे चल रही कॉल सिर्फ़ आपके बैंक का ऐप देख सकता है।", sim: "सिम्युलेटेड" },
+      kn: { again: "ಮತ್ತೆ ಪರಿಶೀಲಿಸಿ", q: "“ನಿಮ್ಮ ಬ್ಯಾಂಕ್”ನಿಂದ ಕರೆ ಬಂದಿದೆಯೇ?", qsub: "ಏನನ್ನಾದರೂ ಹಂಚಿಕೊಳ್ಳುವ ಮೊದಲು ಇಲ್ಲಿ ಪರಿಶೀಲಿಸಿ.", check: "ನನ್ನ ಬ್ಯಾಂಕ್ ನನಗೆ ಕರೆ ಮಾಡುತ್ತಿದೆಯೇ?",
+            no: "ನಿಮ್ಮ ಬ್ಯಾಂಕ್ ಈಗ ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತಿಲ್ಲ.", nosub: "ಕರೆ ಕಟ್ ಮಾಡಿ. OTP, PIN ಅಥವಾ ಕಾರ್ಡ್ ವಿವರ ಎಂದೂ ಹೇಳಬೇಡಿ. ಸಂಶಯವಿದ್ದರೆ ಕಾರ್ಡ್ ಹಿಂಭಾಗದ ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಿ.",
+            yes: "ನಿಮ್ಮ ಬ್ಯಾಂಕ್‌ನಿಂದ ನಿಮಗೆ ಸಕ್ರಿಯ ಕರೆ ಇದೆ", agent: "ಏಜೆಂಟ್", since: "ಆರಂಭ",
+            ask: "ಧ್ವನಿ ನಿಜವಾಗಿಯೂ ಅವರದೇ ಎಂದು ಖಚಿತಪಡಿಸಲು, ಏಜೆಂಟ್‌ಗೆ ಇದನ್ನು ಜೋರಾಗಿ ಹೇಳಲು ಹೇಳಿ:", rec: "ಏಜೆಂಟ್ ರೆಕಾರ್ಡ್ ಮಾಡಿ", stop: "ನಿಲ್ಲಿಸಿ",
+            verify: "ಏಜೆಂಟ್ ಪರಿಶೀಲಿಸಿ", checking: "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…",
+            ok: "ಖಚಿತ: ಇವರು ನಿಮ್ಮ ಬ್ಯಾಂಕ್‌ನ {agent}.", oksub: "ಏಜೆಂಟ್ ಧ್ವನಿ ನಮ್ಮ ದಾಖಲೆಗೆ ಹೊಂದಿತು ಮತ್ತು ಕರೆ ಸಕ್ರಿಯವಾಗಿದೆ.",
+            bad: "ಈ ಕರೆ ಮಾಡಿದವರನ್ನು ಪರಿಶೀಲಿಸಲಾಗಲಿಲ್ಲ.", badsub: "ಕರೆ ಕಟ್ ಮಾಡಿ, ಕಾರ್ಡ್ ಹಿಂಭಾಗದ ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಿ.",
+            foot: "ನಿಮಗೆ ನಡೆಯುತ್ತಿರುವ ಕರೆಗಳನ್ನು ನಿಮ್ಮ ಬ್ಯಾಂಕ್ ಆ್ಯಪ್ ಮಾತ್ರ ನೋಡಬಹುದು.", sim: "ಸಿಮ್ಯುಲೇಟೆಡ್" },
+    };
+    const qs = new URLSearchParams(location.search);
+    const cid = qs.get("c");
+    const L = T[qs.get("lang") || localStorage.getItem("kb-lang") || "en"] || T.en;
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    let clip = null, rec = null;
+    $("foot").textContent = L.foot;
+
+    function home() {
+      $("view").innerHTML = `<div class="box"><h1>${esc(L.q)}</h1><p class="meta">${esc(L.qsub)}</p>
+        <button class="big" id="check">${esc(L.check)}</button></div>`;
+      $("check").onclick = check;
+    }
+    function finalBox(ok, agent, sim) {
+      $("view").innerHTML = `<div class="box ${ok ? "good" : "bad"}"><div class="icon">${ok ? "✅" : "⛔"}</div>
+        <h1>${esc(ok ? L.ok.replace("{agent}", agent) : L.bad)}</h1><p class="meta">${esc(ok ? L.oksub : L.badsub)}</p>
+        ${sim ? `<span class="tag">${esc(L.sim)}</span>` : ""}
+        <button class="big" id="again">${esc(L.again)}</button></div>`;
+      $("again").onclick = check;
+    }
+    async function check() {
+      const r = await fetch(`/api/whos-calling/${encodeURIComponent(cid)}`)
+        .then((x) => x.ok ? x.json() : null).catch(() => null);
+      if (!r) { finalBox(false); return; }
+      if (!r.active) {
+        $("view").innerHTML = `<div class="box bad"><div class="icon">⛔</div><h1>${esc(L.no)}</h1><p class="meta">${esc(L.nosub)}</p>
+          <button class="big" id="again">${esc(L.again)}</button></div>`;
+        $("again").onclick = check;
+        return;
+      }
+      $("view").innerHTML = `<div class="box wait"><h1>${esc(L.yes)}</h1>
+        <p class="meta">${esc(L.agent)}: <b>${esc(r.agent_name)}</b> · ${esc(L.since)}: ${new Date(r.started * 1000).toLocaleTimeString()}</p>
+        <p class="meta" style="margin-top:12px">${esc(L.ask)}</p>
+        <div class="phrase">${esc(r.phrase)}</div>
+        <div class="recbox"><button id="rec" class="rec"><span class="dot"></span><span>${esc(L.rec)}</span></button>
+          <div class="recinfo"><div class="meter"><i id="meter"></i></div><span id="t" class="time">0.0 s</span></div></div>
+        <input id="tx" placeholder="…" style="margin-top:10px" />
+        <button class="big" id="send">${esc(L.verify)}</button></div>`;
+      const demoClip = qs.get("clip");
+      // demo-only: the sample route needs the agent PIN (set once on this device by the agent app)
+      let kbPin = ""; try { kbPin = localStorage.getItem("kb-pin") || ""; } catch (e) {}
+      if (demoClip) fetch("/api/demo-clip/" + encodeURIComponent(demoClip), { headers: kbPin ? { "X-Agent-Pin": kbPin } : {} }).then((x) => (x.ok ? x.blob() : null)).then((b) => { if (b) clip = { blob: b }; });
+      $("rec").onclick = async () => {
+        if (!rec) {
+          rec = new KBAudio.Recorder({ onTick: (s) => ($("t").textContent = s.toFixed(1) + " s"),
+            onLevel: (v) => ($("meter").style.width = Math.min(100, v * 160) + "%"), onTranscript: (x) => ($("tx").value = x) });
+          try { await rec.start({ lang: qs.get("lang") || "en", transcribe: KBAudio.speechSupported }); } catch { rec = null; return; }
+          $("rec").classList.add("on"); $("rec").lastElementChild.textContent = L.stop;
+        } else {
+          const x = rec; rec = null; clip = await x.stop();
+          $("rec").classList.remove("on"); $("rec").lastElementChild.textContent = L.rec;
+        }
+      };
+      $("send").onclick = async () => {
+        if (!clip) return;
+        $("send").disabled = true; $("send").textContent = L.checking;
+        const fd = new FormData();
+        fd.append("file", clip.blob, "agent.wav");
+        fd.append("transcript", $("tx").value);
+        const res = await fetch(`/api/whos-calling/${encodeURIComponent(cid)}/verify`, { method: "POST", body: fd }).then((x) => x.json()).catch(() => ({}));
+        finalBox(!!res.result?.verified, res.agent_name, res.result?.simulated);
+      };
+    }
+    home();
+  })();
+  </script>
+</body>
+</html>

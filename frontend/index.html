@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kaun Bol Raha Hai? — Bank Verification</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231d2a44'/><path d='M8 16h2M12 11v10M16 7v18M20 11v10M24 15v2' stroke='%23f4b860' stroke-width='2.4' stroke-linecap='round'/></svg>" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#1d2a44" />
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
+</head>
+<body data-profile="bank">
+  <header class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" /><path d="M8 16h2M12 11v10M16 7v18M20 11v10M24 15v2" /></svg>
+      <div>
+        <h1>Kaun Bol Raha Hai?</h1>
+        <p data-i18n="tagline"></p>
+      </div>
+    </div>
+    <div class="tops">
+    <div class="lang" role="group" aria-label="Language">
+      <button data-lang="en">EN</button><button data-lang="hi">हिं</button><button data-lang="kn">ಕನ್ನಡ</button>
+    </div>
+    </div>
+  </header>
+
+  <div id="modeBanner" class="banner"></div>
+  <div id="incoming" class="incoming" hidden>
+    <div class="ring">📞</div>
+    <div class="inc-body">
+      <b id="incTitle"></b>
+      <div id="incInfo" class="numbadge"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn primary-sm" id="incLive" data-i18n="inc_start"></button>
+        <button class="btn" id="incCheck" data-i18n="inc_check"></button>
+        <button class="btn" id="incDismiss" data-i18n="inc_dismiss"></button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="check" class="active" data-i18n="tab_check"></button>
+    <button role="tab" data-tab="live" data-i18n="tab_live"></button>
+    <button role="tab" data-tab="family" data-i18n="tab_family"></button>
+    <button role="tab" data-tab="numbers" data-i18n="tab_numbers"></button>
+    <button role="tab" data-tab="transactions" data-i18n="tx_title"></button>
+  </nav>
+
+  <main>
+    <!-- CHECK ------------------------------------------------------------>
+    <section id="tab-check" class="panel active">
+      <div class="card">
+        <label class="lbl" for="claimed" data-i18n="who_claims"></label>
+        <select id="claimed"></select>
+        <p id="noFamilyHint" class="hint" data-i18n="no_family_hint" hidden></p>
+        <label class="check"><input type="checkbox" id="autoDetect" checked /> <span data-i18n="auto_detect"></span></label>
+        <p class="hint" data-i18n="auto_detect_hint"></p>
+        <label class="lbl" for="callerNum" data-i18n="caller_number"></label>
+        <input id="callerNum" type="tel" inputmode="tel" maxlength="20" />
+        <label class="check"><input type="checkbox" id="numHidden" /> <span data-i18n="number_hidden"></span></label>
+        <div id="numBadge" class="numbadge" hidden></div>
+        <p class="hint" data-i18n="caller_number_hint"></p>
+        <label class="lbl" for="action" data-i18n="action_label"></label>
+        <select id="action" class="action-sel">
+          <option value="" data-i18n="act_general"></option>
+          <option value="balance" data-i18n="act_balance"></option>
+          <option value="contact_change" data-i18n="act_contact_change"></option>
+          <option value="payment" data-i18n="act_payment"></option>
+          <option value="card" data-i18n="act_card"></option>
+        </select>
+
+        <div class="recbox">
+          <button id="recBtn" class="rec"><span class="dot"></span><span data-i18n="record"></span></button>
+          <div class="recinfo">
+            <div class="meter"><i id="meter"></i></div>
+            <span id="recTime" class="time">0.0 s</span>
+          </div>
+        </div>
+        <p class="hint" data-i18n="rec_hint_check"></p>
+        <label class="upload"><input id="fileIn" type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg,.opus,.webm,.flac" /><span data-i18n="or_upload"></span></label>
+        <div id="clipReady" class="clip" hidden></div>
+
+        <label class="lbl" for="transcript" data-i18n="transcript_label"></label>
+        <textarea id="transcript" rows="3"></textarea>
+        <p class="hint" data-i18n="transcript_hint"></p>
+        <label class="check"><input type="checkbox" id="liveTx" checked /> <span data-i18n="live_transcript"></span></label>
+
+        <div id="demoBox" class="demo" hidden>
+          <label class="lbl" for="scenario" data-i18n="demo_scenario"></label>
+          <select id="scenario">
+            <option value="genuine" data-i18n="sc_genuine"></option>
+            <option value="cloned" data-i18n="sc_cloned"></option>
+            <option value="wrong_person" data-i18n="sc_wrong_person"></option>
+            <option value="spliced" data-i18n="sc_spliced"></option>
+          </select>
+        </div>
+
+        <button id="checkBtn" class="primary" data-i18n="check_btn"></button>
+        <p id="checkErr" class="err" hidden></p>
+      </div>
+
+      <div id="result" hidden></div>
+
+      <div class="card subtle">
+        <h3 data-i18n="history"></h3>
+        <ul id="history" class="history"></ul>
+      </div>
+    </section>
+
+    <!-- LIVE CALL -------------------------------------------------------->
+    <section id="tab-live" class="panel">
+      <div class="card" id="liveSetup">
+        <h2 data-i18n="live_title"></h2>
+        <p class="muted" data-i18n="live_intro"></p>
+        <label class="lbl" for="liveClaimed" data-i18n="who_claims"></label>
+        <select id="liveClaimed"></select>
+        <label class="check"><input type="checkbox" id="liveAuto" checked /> <span data-i18n="auto_detect"></span></label>
+        <label class="lbl" for="liveNum" data-i18n="caller_number"></label>
+        <input id="liveNum" type="tel" inputmode="tel" maxlength="20" />
+        <label class="check"><input type="checkbox" id="liveHidden" /> <span data-i18n="number_hidden"></span></label>
+        <div id="liveNumBadge" class="numbadge" hidden></div>
+        <p class="hint" data-i18n="caller_number_hint"></p>
+        <label class="lbl" for="liveAction" data-i18n="action_label"></label>
+        <select id="liveAction" class="action-sel">
+          <option value="" data-i18n="act_general"></option>
+          <option value="balance" data-i18n="act_balance"></option>
+          <option value="contact_change" data-i18n="act_contact_change"></option>
+          <option value="payment" data-i18n="act_payment"></option>
+          <option value="card" data-i18n="act_card"></option>
+        </select>
+        <p class="hint" data-i18n="live_cost_hint"></p>
+        <div id="liveDemoBox" class="demo" hidden>
+          <label class="lbl" for="liveScenario" data-i18n="demo_scenario"></label>
+          <select id="liveScenario">
+            <option value="genuine" data-i18n="sc_genuine"></option>
+            <option value="cloned" data-i18n="sc_cloned"></option>
+            <option value="wrong_person" data-i18n="sc_wrong_person"></option>
+          </select>
+        </div>
+        <div class="outbound bank-only">
+          <b data-i18n="ob_title"></b>
+          <p class="hint" data-i18n="ob_hint"></p>
+          <label class="lbl" for="obAgent" data-i18n="ob_agent"></label>
+          <select id="obAgent"></select>
+          <label class="lbl" for="obCustomer" data-i18n="ob_customer"></label>
+          <select id="obCustomer"></select>
+          <button class="btn ask-btn" id="obStart" data-i18n="ob_start"></button>
+          <div id="obBox" class="ask-box" hidden></div>
+        </div>
+        <div class="sim">
+          <b data-i18n="sim_title"></b>
+          <p class="hint" data-i18n="sim_hint"></p>
+          <div class="sw"><select id="simFrom"></select><button class="btn" id="simBtn" data-i18n="sim_btn"></button></div>
+        </div>
+        <div id="liveSamples" class="row" hidden style="margin-top:12px"></div>
+        <label class="check bank-only"><input id="liveBot" type="checkbox" /> <span data-i18n="bot_enable"></span></label>
+        <div class="audio-input">
+          <label class="lbl" for="liveInput" data-i18n="input_label"></label>
+          <select id="liveInput"></select>
+          <button id="inputTest" class="btn" type="button" data-i18n="input_test"></button>
+          <button id="pcAudioBtn" class="btn" type="button" data-i18n="input_pc"></button>
+          <div class="meter" id="inputTestMeter" hidden><i id="inputPreviewLevel"></i></div>
+          <p id="inputMessage" class="hint" role="status" data-i18n="input_help"></p>
+          <p id="pcAudioHint" class="hint" data-i18n="input_pc_help"></p>
+        </div>
+        <button id="liveMicBtn" class="primary" data-i18n="live_start_mic"></button>
+        <label class="upload"><input id="liveFile" type="file" accept="audio/*,.wav,.mp3,.m4a,.ogg,.webm" /><span data-i18n="live_from_file"></span></label>
+        <p id="liveErr" class="err" hidden></p>
+      </div>
+
+      <div id="liveCall" hidden>
+        <div id="liveLight" class="light idle">
+          <div class="pulse"></div>
+          <div>
+            <h2 id="liveHeadline"></h2>
+            <p id="liveSub" class="note"></p>
+          </div>
+          <span id="liveTimer" class="time big">0:00</span>
+        </div>
+        <div id="liveCallBadge" class="numbadge" hidden></div>
+        <div id="hangup" class="hangup" hidden><span data-i18n="live_hangup"></span></div>
+        <section id="botLane" class="card bank-only" hidden>
+          <div class="sig-h"><b data-i18n="bot_title"></b><span id="botState" role="status" class="pill"></span></div>
+          <p id="botReason" class="hint"></p>
+          <ol id="botLines" class="bot-lines" aria-live="polite"></ol>
+          <div class="row">
+            <button id="botStep" class="btn" data-i18n="bot_step"></button>
+            <button id="botHandover" class="btn" data-i18n="bot_handover"></button>
+            <button id="botResume" class="btn" data-i18n="bot_resume"></button>
+          </div>
+        </section>
+        <div class="card">
+          <div class="meter"><i id="liveMeter"></i></div>
+          <p id="liveInputState" class="hint" role="status" hidden></p>
+          <ul class="signals" style="margin-top:12px">
+            <li><div class="sig-h"><span data-i18n="sig_voice"></span><span id="liveVoicePill" class="pill na">—</span></div>
+              <p id="liveVoiceText" class="sig-t"></p>
+              <div class="num" data-i18n="live_score_history"></div>
+              <div id="liveSpark" class="spark"></div></li>
+            <li><div class="sig-h"><span data-i18n="sig_identity"></span><span id="liveIdPill" class="pill na">—</span></div>
+              <p id="liveIdText" class="sig-t"></p></li>
+            <li><div class="sig-h"><span data-i18n="sig_script"></span><span id="liveScriptPill" class="pill na">—</span></div>
+              <div id="liveChips" class="chips"></div>
+              <textarea id="liveTranscript" rows="2"></textarea>
+              <p class="hint" data-i18n="live_tx_hint"></p>
+              <p class="hint" data-i18n="live_quiet_tip"></p></li>
+          </ul>
+          <button id="liveAsk" class="btn ask-btn" style="margin-top:14px"></button>
+          <div class="row live-payment-actions">
+            <button id="liveHold" class="btn" type="button" data-i18n="tx_live_hold"></button>
+            <button id="liveSendOtp" class="btn" type="button" data-i18n="tx_send_otp"></button>
+            <button id="liveSendEmail" class="btn" type="button" data-i18n="tx_email"></button>
+          </div>
+          <div id="liveAskBox" class="ask-box" hidden></div>
+          <button id="liveChallenge" class="btn" style="margin-top:10px" data-i18n="replay_live_btn"></button>
+          <div id="liveReplay" class="replay-box" hidden></div>
+          <button id="liveStop" class="primary danger" data-i18n="live_stop"></button>
+        </div>
+      </div>
+      <div id="liveResult"></div>
+    </section>
+
+    <!-- FAMILY ----------------------------------------------------------->
+    <section id="tab-family" class="panel">
+      <div class="card">
+        <h2 data-i18n="fam_title"></h2>
+        <p class="muted" data-i18n="fam_intro"></p>
+        <ul id="famList" class="fam"></ul>
+      </div>
+      <div class="card">
+        <input id="famName" maxlength="60" />
+        <input id="famRel" maxlength="40" />
+        <input id="famPhone" type="tel" inputmode="tel" maxlength="20" />
+        <input id="famTarget" type="hidden" />
+        <p class="lbl" data-i18n="fam_read"></p>
+        <blockquote id="passage" data-i18n="fam_passage"></blockquote>
+        <div class="recbox">
+          <button id="famRecBtn" class="rec"><span class="dot"></span><span data-i18n="record"></span></button>
+          <div class="recinfo">
+            <div class="meter"><i id="famMeter"></i><b class="mark15"></b></div>
+            <span id="famTime" class="time">0.0 s</span>
+          </div>
+        </div>
+        <label class="upload"><input id="famFile" type="file" accept="audio/*" /><span data-i18n="or_upload"></span></label>
+        <div id="famClip" class="clip" hidden></div>
+        <button id="famSave" class="primary" data-i18n="fam_save"></button>
+        <p id="famMsg" class="msg" hidden></p>
+      </div>
+    </section>
+
+    <!-- SAFE-WORD -------------------------------------------------------->
+    <section id="tab-numbers" class="panel">
+      <div class="card">
+        <h2 data-i18n="nums_title"></h2>
+        <p class="muted" data-i18n="nums_intro"></p>
+        <div class="sw"><input id="numAdd" type="tel" placeholder="+91 ..." /><button class="btn" id="numFlag" data-i18n="num_flag"></button><button class="btn" id="numTrust" data-i18n="num_trust"></button></div>
+        <ul id="numList" class="fam"></ul>
+      </div>
+      <div class="card">
+        <div class="sig-h"><h2 data-i18n="log_title"></h2><a class="btn" href="/api/incidents.csv" data-i18n="log_csv"></a></div>
+        <p class="muted" data-i18n="log_intro"></p>
+        <ul id="logList" class="history big"></ul>
+      </div>
+      <div class="card">
+        <div class="sig-h"><h2 data-i18n="acc_title"></h2><button class="btn" id="accRun" data-i18n="acc_run"></button></div>
+        <p class="muted" data-i18n="acc_intro"></p>
+        <div id="accBox"></div>
+      </div>
+    </section>
+
+    <section id="tab-transactions" class="panel">
+      <form id="txForm" class="card">
+        <h2 data-i18n="tx_title"></h2>
+        <p class="hint" data-i18n="tx_intro"></p>
+        <label class="lbl" for="txCustomer" data-i18n="tx_customer"></label>
+        <select id="txCustomer" required></select>
+        <div class="tx-fields">
+          <div>
+            <label class="lbl" for="txAmount" data-i18n="tx_amount"></label>
+            <input id="txAmount" inputmode="decimal" maxlength="10" placeholder="4800.00" required />
+          </div>
+          <div>
+            <label class="lbl" for="txMerchant" data-i18n="tx_merchant"></label>
+            <input id="txMerchant" maxlength="80" placeholder="Demo Store" required />
+          </div>
+        </div>
+        <label class="lbl" for="txLang" data-i18n="tx_language"></label>
+        <select id="txLang">
+          <option value="kn">ಕನ್ನಡ</option><option value="hi">हिन्दी</option><option value="en">English</option>
+        </select>
+        <div class="row">
+          <button id="txSubmit" type="submit" class="btn" data-i18n="tx_hold"></button>
+          <button id="txReset" type="button" class="btn" data-i18n="tx_new" hidden></button>
+        </div>
+        <p id="txError" class="err" role="alert" hidden></p>
+      </form>
+      <div id="txCard" class="card" hidden>
+        <div class="sig-h">
+          <b id="txExact"></b>
+          <span id="txState" class="pill warn" role="status"></span>
+        </div>
+        <p id="txDetails" class="hint"></p>
+        <p id="txEvidence" class="hint" hidden></p>
+        <div class="row tx-delivery" id="txLinkRow" hidden>
+          <a id="txOpen" class="btn" target="_blank" rel="noopener noreferrer" data-i18n="tx_open"></a>
+          <button id="txCopy" class="btn" type="button" data-i18n="tx_copy"></button>
+          <button id="txShowQr" class="btn" type="button" aria-expanded="false" aria-controls="txQr" data-i18n="tx_qr"></button>
+          <button id="txSms" class="btn" type="button" data-i18n="tx_sms"></button>
+          <button id="txEmail" class="btn" type="button" data-i18n="tx_email"></button>
+          <button id="txOtp" class="btn" type="button" data-i18n="tx_send_otp"></button>
+        </div>
+        <div id="txQr" hidden>
+          <img id="txQrImage" width="188" height="188" alt="" />
+          <p id="txQrHelp" class="hint"></p>
+        </div>
+        <p id="txSmsStatus" class="hint" role="status" hidden></p>
+        <p id="txOtpStatus" class="hint" role="status" hidden></p>
+        <div class="row tx-actions">
+          <button id="txLive" class="btn" type="button" data-i18n="tx_live"></button>
+          <button id="txReport" class="btn lost" type="button" data-i18n="tx_report"></button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built on <a href="https://platform.detectif.ai" target="_blank" rel="noopener">DetectifAI</a> Aletheia (deepfake detection) + Eidos (speaker verification).
+    Scam? Call <b>1930</b> · <a href="https://cybercrime.gov.in" target="_blank" rel="noopener">cybercrime.gov.in</a>
+  </footer>
+
+  <script src="/static/i18n.js"></script>
+  <script src="/static/audio.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

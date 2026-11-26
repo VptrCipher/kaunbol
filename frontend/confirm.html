@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Is this you on the call?</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+    body { background: var(--ink); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 24px 12px; }
+    .phone { width: 100%; max-width: 460px; background: var(--paper); border: 1px solid var(--saffron-d); border-top: 7px solid var(--rust); padding: 22px 18px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+    .bankrow { display: flex; align-items: center; gap: 10px; font: bold 1.25rem Georgia, serif; color: var(--ink); }
+    .bankrow .b { width: 34px; height: 34px; background: var(--ink); color: var(--saffron); display: grid; place-items: center; }
+    .alert { margin-top: 16px; background: var(--card); border: 1px solid var(--saffron-d); padding: 16px; }
+    .alert h1 { font-size: 1.25rem; margin: 0 0 6px; }
+    .meta { color: var(--ink-2); font-size: .9rem; }
+    .big { display: block; width: 100%; padding: 16px; margin-top: 12px; font: inherit; font-size: 1.05rem; font-weight: 800; border-radius: 3px; border: 0; cursor: pointer; }
+    .big:disabled { opacity: .55; cursor: default; }
+    .no { background: var(--high); color: #fff; }
+    .yes { background: var(--low); color: #fff; }
+    .done { text-align: center; padding: 26px 10px; }
+    .done .icon { font-size: 3rem; }
+    .tiny { font-size: .78rem; color: var(--ink-2); text-align: center; margin-top: 16px; }
+  </style>
+  <meta name="theme-color" content="#1d2a44" />
+</head>
+<body>
+  <div class="phone">
+    <div class="bankrow"><span class="b">₹</span><span>Kaun Bol</span></div>
+    <div id="view"></div>
+    <p class="tiny" id="foot"></p>
+  </div>
+  <script src="/static/i18n.js"></script>
+  <script src="/static/audio.js"></script>
+  <script>
+  (function () {
+    const T = {
+      en: { title: "Is this you on a call with us right now?", sub: "Someone is on a call with our customer care, saying they are you.",
+            from: "Calling from", when: "Started", no: "No, it's not me", yes: "Yes, it's me",
+            say: "To confirm, say this phrase out loud:", rec: "Record", stop: "Stop", send: "Confirm it's me",
+            denied: "Thank you. We've stopped that call.", deniedSub: "Your account is on hold for this request. Nobody can make changes on that call.",
+            confirmed: "Thanks, you're verified.", confirmedSub: "Your voice matched on your registered phone. The agent can continue.",
+            failed: "We couldn't verify you.", failedSub: "The request stays on hold. Please call us back on the official number.",
+            expired: "This request has expired.", left: "{s} s left", foot: "Sent to your registered device. We will never ask for your PIN or OTP.",
+            checking: "Checking…", sim: "SIMULATED" },
+      hi: { title: "क्या अभी हमसे कॉल पर आप ही हैं?", sub: "कोई हमारे कस्टमर केयर से कॉल पर खुद को आप बता रहा है।",
+            from: "नंबर", when: "शुरू", no: "नहीं, यह मैं नहीं हूँ", yes: "हाँ, यह मैं हूँ",
+            say: "पुष्टि के लिए यह वाक्य ज़ोर से बोलें:", rec: "रिकॉर्ड", stop: "रोकें", send: "पुष्टि करें",
+            denied: "धन्यवाद। हमने वह कॉल रोक दी है।", deniedSub: "इस अनुरोध के लिए आपका खाता होल्ड पर है।",
+            confirmed: "धन्यवाद, आपकी पुष्टि हो गई।", confirmedSub: "आपकी आवाज़ आपके रजिस्टर्ड फ़ोन पर मेल खा गई।",
+            failed: "हम पुष्टि नहीं कर सके।", failedSub: "अनुरोध होल्ड पर है। कृपया आधिकारिक नंबर पर कॉल करें।",
+            expired: "यह अनुरोध समाप्त हो गया।", left: "{s} से. बाकी", foot: "आपके रजिस्टर्ड डिवाइस पर भेजा गया। हम कभी PIN या OTP नहीं माँगते।",
+            checking: "जाँच रहे हैं…", sim: "सिम्युलेटेड" },
+      kn: { title: "ಈಗ ನಮ್ಮೊಂದಿಗೆ ಕರೆಯಲ್ಲಿರುವುದು ನೀವೇನಾ?", sub: "ಯಾರೋ ನಮ್ಮ ಗ್ರಾಹಕ ಸೇವೆಗೆ ಕರೆ ಮಾಡಿ ತಾವು ನೀವು ಎನ್ನುತ್ತಿದ್ದಾರೆ.",
+            from: "ನಂಬರ್", when: "ಆರಂಭ", no: "ಇಲ್ಲ, ಇದು ನಾನಲ್ಲ", yes: "ಹೌದು, ಇದು ನಾನೇ",
+            say: "ಖಚಿತಪಡಿಸಲು ಈ ವಾಕ್ಯವನ್ನು ಜೋರಾಗಿ ಹೇಳಿ:", rec: "ರೆಕಾರ್ಡ್", stop: "ನಿಲ್ಲಿಸಿ", send: "ಖಚಿತಪಡಿಸಿ",
+            denied: "ಧನ್ಯವಾದ. ಆ ಕರೆಯನ್ನು ನಿಲ್ಲಿಸಿದ್ದೇವೆ.", deniedSub: "ಈ ವಿನಂತಿಗಾಗಿ ನಿಮ್ಮ ಖಾತೆ ತಡೆಹಿಡಿಯಲಾಗಿದೆ.",
+            confirmed: "ಧನ್ಯವಾದ, ನೀವು ಪರಿಶೀಲಿಸಲ್ಪಟ್ಟಿದ್ದೀರಿ.", confirmedSub: "ನಿಮ್ಮ ಧ್ವನಿ ನಿಮ್ಮ ನೋಂದಾಯಿತ ಫೋನ್‌ನಲ್ಲಿ ಹೊಂದಿಕೆಯಾಯಿತು.",
+            failed: "ಪರಿಶೀಲಿಸಲಾಗಲಿಲ್ಲ.", failedSub: "ವಿನಂತಿ ತಡೆಹಿಡಿಯಲಾಗಿದೆ. ಅಧಿಕೃತ ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಿ.",
+            expired: "ಈ ವಿನಂತಿಯ ಅವಧಿ ಮುಗಿದಿದೆ.", left: "{s} ಸೆ. ಉಳಿದಿದೆ", foot: "ನಿಮ್ಮ ನೋಂದಾಯಿತ ಸಾಧನಕ್ಕೆ ಕಳುಹಿಸಲಾಗಿದೆ. ನಾವು ಎಂದೂ PIN ಅಥವಾ OTP ಕೇಳುವುದಿಲ್ಲ.",
+            checking: "ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…", sim: "ಸಿಮ್ಯುಲೇಟೆಡ್" },
+    };
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const token = location.pathname.split("/").pop();
+    let req = null, L = T.en, clip = null, rec = null, timer = null;
+    const txText = (key) => (window.I18N[req?.lang] || window.I18N.en)[key] || window.I18N.en[key];
+    const locale = () => ({ en: "en-IN", hi: "hi-IN", kn: "kn-IN" })[req.lang] || "en-IN";
+    function exactTransaction() {
+      const price = new Intl.NumberFormat(locale(), { style: "currency", currency: "INR" });
+      return txText("tx_summary").replace("{amount}", price.format(req.transaction.amount_minor / 100))
+        .replace("{merchant}", req.transaction.merchant);
+    }
+
+    function done(kind, sim) {
+      clearInterval(timer);
+      if (rec?.rec?.state === "recording") rec.stop().catch(() => {});
+      rec = null;
+      const icon = { denied: "×", confirmed: "✓", failed: "!", expired: "—", superseded: "—", checking: "…", revoked: "!" }[kind];
+      const col = { denied: "var(--high)", confirmed: "var(--low)", failed: "var(--high)" }[kind] || "var(--med)";
+      let heading = L[kind], sub = L[kind + "Sub"] || "";
+      if (kind === "revoked") heading = txText("tx_result_revoked");
+      else if (kind === "superseded") heading = txText("tx_device_superseded");
+      else if (req?.transaction) {
+        if (["denied", "confirmed"].includes(kind)) {
+          heading = txText("tx_device_" + kind);
+          sub = exactTransaction();
+        } else if (kind === "failed") sub = txText("tx_result_failed");
+        else if (kind === "checking") { heading = txText("tx_result_checking"); sub = exactTransaction(); }
+      }
+      $("view").innerHTML = `<div class="alert done" style="border-color:${col}"><div class="icon">${icon}</div>
+        <h1 role="status">${esc(heading)}</h1><p class="meta">${esc(sub)}</p>${sim ? `<span class="tag">${esc(L.sim)}</span>` : ""}</div>`;
+    }
+
+    function render() {
+      clearInterval(timer);
+      if (req.status !== "pending") return done(req.status, req.result?.simulated);
+      const transaction = req.transaction;
+      const needsOtp = transaction?.otp_required && req.otp !== "verified";
+      const browserWords = !transaction || transaction.simulated_checks;
+      const readAloud = Boolean(window.speechSynthesis && window.SpeechSynthesisUtterance);
+      $("view").innerHTML = `<div class="alert">
+        <h1>${esc(transaction ? txText("tx_device_title") : L.title)}</h1>
+        <p class="meta">${esc(transaction ? txText("tx_device_sub") : L.sub)}</p>
+        ${transaction ? `<label class="lbl" for="deviceLang">${esc(txText("tx_language"))}</label>
+          <select id="deviceLang"><option value="kn">ಕನ್ನಡ</option><option value="hi">हिन्दी</option><option value="en">English</option></select>
+          <p id="paymentDetails"><strong>${esc(exactTransaction())}</strong></p>
+          ${transaction.simulated_checks ? `<span class="tag">${esc(L.sim)}</span>` : ""}
+          ${readAloud ? `<button id="readTx" class="btn" type="button">${esc(txText("tx_device_read"))}</button>` : ""}`
+          : `<p class="meta">${esc(L.from)}: <b>${esc(req.caller_masked)}</b> · ${esc(L.when)}: ${new Date(req.created * 1000).toLocaleTimeString()}</p>`}
+        <p class="num" id="left"></p>
+        <button class="big no" id="no">${esc(transaction ? txText("tx_device_deny") : L.no)}</button>
+        <button class="big yes" id="yes" ${needsOtp ? "hidden" : ""}>${esc(transaction ? txText("tx_device_approve") : L.yes)}</button>
+        ${needsOtp ? `<div class="otp-controls">
+          <p class="meta">${esc(txText("otp_private"))}</p>
+          <button class="big yes" id="startOtp" type="button" ${!req.email_link_sent || !req.otp_available || req.otp !== "idle" ? "disabled" : ""}>${esc(txText("otp_start"))}</button>
+          <form id="otpForm" ${req.otp !== "sent" ? "hidden" : ""}>
+            <label class="lbl" for="otpCode">${esc(txText("otp_code"))}</label>
+            <input id="otpCode" type="password" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{4,10}" maxlength="10" required />
+            <button class="big yes" id="checkOtp">${esc(txText("otp_check"))}</button>
+          </form>
+          <p id="otpMessage" class="meta" role="status">${esc(!req.otp_available || req.otp === "locked" ? txText("otp_unavailable") : "")}</p>
+        </div>` : ""}
+        <div id="verify" hidden>
+          <p class="meta" style="margin-top:14px">${esc(transaction ? txText("tx_device_prompt") : L.say)}</p>
+          <div class="phrase">${esc(req.phrase)}</div>
+          <div class="recbox"><button id="rec" class="rec"><span class="dot"></span><span>${esc(L.rec)}</span></button>
+            <div class="recinfo"><div class="meter"><i id="meter"></i></div><span id="t" class="time">0.0 s</span></div></div>
+          <div ${browserWords ? "" : "hidden"}><input id="tx" aria-label="${esc(transaction ? txText("tx_device_transcript") : L.say)}"
+            placeholder="…" style="margin-top:10px" ${transaction ? "readonly" : ""} /></div>
+          <p id="voiceMessage" class="err" role="alert" hidden></p>
+          <button class="big yes" id="send" ${transaction ? "disabled" : ""}>${esc(transaction ? txText("tx_device_send") : L.send)}</button>
+        </div></div>`;
+      const end = Date.now() + req.expires_in * 1000;
+      const tick = () => {
+        const left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
+        if ($("left")) $("left").textContent = L.left.replace("{s}", left);
+        if (!left) done("expired");
+      };
+      timer = setInterval(tick, 1000);
+      tick();
+      if (!$("no")) return;
+      if (transaction) {
+        $("deviceLang").value = req.lang;
+        $("deviceLang").onchange = async (event) => {
+          event.target.disabled = true;
+          $("yes").disabled = true;
+          try {
+            const r = await fetch(`/api/confirm/device/${token}/language`, {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ lang: event.target.value }),
+            });
+            const updated = await refresh(r);
+            if (!updated.lang) return done("failed");
+            accept(updated);
+          } catch { done("failed"); }
+        };
+      }
+      if ($("readTx")) $("readTx").onclick = () => {
+        window.speechSynthesis.cancel();
+        const message = new SpeechSynthesisUtterance(exactTransaction());
+        message.lang = locale();
+        window.speechSynthesis.speak(message);
+      };
+      const message = (key) => {
+        const output = $("voiceMessage");
+        if (output) {
+          output.textContent = key ? txText(key) : "";
+          output.hidden = !key;
+        }
+      };
+      const updateSend = () => {
+        if (transaction && $("send")) $("send").disabled = Boolean(rec) || !clip || clip.seconds < 5
+          || (browserWords && !$("tx").value.trim());
+      };
+      const refresh = async (response) => {
+        if (response.ok) return response.json();
+        const current = await fetch(`/api/confirm/device/${token}`, { cache: "no-store" });
+        return current.ok ? current.json() : { status: "failed" };
+      };
+      async function otpAction(path, data) {
+        try {
+          const response = await fetch(`/api/confirm/device/${token}/${path}`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: data === undefined ? undefined : JSON.stringify(data),
+          });
+          const body = await response.json();
+          if (response.ok) { accept(body); return; }
+          const current = await refresh(response);
+          if (!current.lang) return done("failed");
+          accept(current);
+          if ($("otpMessage")) $("otpMessage").textContent = txText(body.detail?.code || "otp_unavailable");
+        } catch {
+          if ($("otpMessage")) $("otpMessage").textContent = txText("otp_unavailable");
+          if ($("startOtp") && req.otp_available && req.otp === "idle") $("startOtp").disabled = false;
+          if ($("checkOtp")) $("checkOtp").disabled = false;
+        }
+      }
+      if (needsOtp) {
+        $("startOtp").onclick = (event) => {
+          event.target.disabled = true;
+          otpAction("otp-start");
+        };
+        $("otpForm").onsubmit = (event) => {
+          event.preventDefault();
+          $("checkOtp").disabled = true;
+          otpAction("otp-check", { code: $("otpCode").value });
+        };
+      }
+      $("no").onclick = async () => {
+        try {
+          const r = await fetch(`/api/confirm/device/${token}/deny`, { method: "POST" });
+          const current = await refresh(r);
+          done(current.status === "pending" ? "failed" : current.status, current.result?.simulated);
+        } catch { done("failed"); }
+      };
+      $("yes").onclick = () => {
+        $("verify").hidden = false;
+        $("yes").hidden = true;
+        if (transaction) $("deviceLang").disabled = true;
+        if (transaction && browserWords && !KBAudio.speechSupported) {
+          message("tx_device_unsupported");
+          $("rec").disabled = true;
+        } else $("rec").focus();
+      };
+      $("rec").onclick = async () => {
+        $("rec").disabled = true;
+        if (!rec) {
+          window.speechSynthesis?.cancel();
+          clip = null; $("tx").value = ""; message("");
+          rec = new KBAudio.Recorder({
+            onTick: (s) => { if ($("t")) $("t").textContent = s.toFixed(1) + " s"; },
+            onLevel: (v) => { if ($("meter")) $("meter").style.width = Math.min(100, v * 160) + "%"; },
+            onTranscript: (x) => { if ($("tx")) { $("tx").value = x; updateSend(); } },
+            onSpeechError: () => { if (transaction) message("tx_device_unsupported"); },
+          });
+          updateSend();
+          const active = rec;
+          try {
+            await active.start({ lang: req.lang, transcribe: browserWords && KBAudio.speechSupported });
+            if (!$("rec")) { await active.stop(); return; }
+            $("rec").classList.add("on"); $("rec").lastElementChild.textContent = L.stop;
+          } catch { rec = null; if (transaction) message("tx_device_retry"); }
+        } else {
+          const active = rec; rec = null;
+          try { clip = await active.stop(); } catch { clip = null; }
+          if (!$("rec")) return;
+          $("rec").classList.remove("on"); $("rec").lastElementChild.textContent = L.rec;
+          if (transaction && (!clip || clip.seconds < 5 || (browserWords && !$("tx").value.trim()))) message("tx_device_retry");
+        }
+        if ($("rec")) $("rec").disabled = false;
+        updateSend();
+      };
+      $("send").onclick = async () => {
+        if (!clip) return;
+        $("send").disabled = true; $("send").textContent = L.checking;
+        const fd = new FormData();
+        fd.append("file", clip.blob, "answer.wav");
+        fd.append("transcript", $("tx").value);
+        try {
+          const r = await fetch(`/api/confirm/device/${token}/approve`, { method: "POST", body: fd });
+          const body = await refresh(r);
+          done(body.status === "pending" ? "failed" : body.status, body.result?.simulated);
+        } catch { done("failed"); }
+      };
+      // for demos without a mic: allow loading a clip (?clip=name in demo_clips)
+      const demoClip = new URLSearchParams(location.search).get("clip");
+      let kbPin = ""; try { kbPin = localStorage.getItem("kb-pin") || ""; } catch (e) {}  // demo-only; route needs the agent PIN
+      if (!transaction && demoClip) fetch("/api/demo-clip/" + encodeURIComponent(demoClip), { headers: kbPin ? { "X-Agent-Pin": kbPin } : {} }).then((x) => (x.ok ? x.blob() : null)).then((b) => { if (b) clip = { blob: b }; });
+    }
+
+    function accept(d) {
+      clip = null;
+      req = d; L = T[d.lang] || T.en; document.documentElement.lang = d.lang;
+      $("foot").textContent = d.transaction ? txText("tx_device_foot") : L.foot;
+      render();
+    }
+    fetch(`/api/confirm/device/${token}`, { cache: "no-store" }).then((r) => r.ok ? r.json() : null).catch(() => null).then((d) => {
+      if (!d) { $("view").innerHTML = `<div class="alert done"><h1>${esc(T.en.expired)}</h1></div>`; return; }
+      accept(d);
+    });
+  })();
+  </script>
+</body>
+</html>

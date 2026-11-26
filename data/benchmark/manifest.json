@@ -1,0 +1,453 @@
+[
+  {
+    "clip": "a_clip27.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, real voice, checked against Person A",
+    "speaker": "a",
+    "condition": "clean"
+  },
+  {
+    "clip": "a_clip28.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, a different recording",
+    "speaker": "a",
+    "condition": "clean"
+  },
+  {
+    "clip": "b_clip30.wav",
+    "claim": "Person B",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person B, real voice, checked against Person B",
+    "speaker": "b",
+    "condition": "clean"
+  },
+  {
+    "clip": "b_clip30.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": false,
+    "note": "Person B pretending to be Person A (real human impostor)",
+    "speaker": "b",
+    "condition": "clean"
+  },
+  {
+    "clip": "ai_voice.wav",
+    "claim": "Person A",
+    "voice": "fake",
+    "same_person": false,
+    "note": "AI-generated voice claiming to be Person A",
+    "speaker": "tts_1",
+    "condition": "clean"
+  },
+  {
+    "clip": "c_real.wav",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": true,
+    "note": "Independent genuine clip from enrolled speaker C",
+    "speaker": "c",
+    "condition": "clean"
+  },
+  {
+    "clip": "d_real.wav",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": false,
+    "note": "Permission-cleared speaker D checked against speaker C",
+    "speaker": "d",
+    "condition": "clean"
+  },
+  {
+    "clip": "tts_english.wav",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf English TTS voice distinct from the original synthetic sample",
+    "speaker": "tts_2",
+    "language": "en",
+    "condition": "clean"
+  },
+  {
+    "clip": "tts_hindi.wav",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf Hindi TTS voice distinct from both English voices",
+    "speaker": "tts_3",
+    "language": "hi",
+    "condition": "clean"
+  },
+  {
+    "clip": "a_clip27__telephone_8khz.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, real voice, checked against Person A",
+    "speaker": "a",
+    "source_clip": "a_clip27.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "a_clip27__g711_mulaw.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, real voice, checked against Person A",
+    "speaker": "a",
+    "source_clip": "a_clip27.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "a_clip27__opus_16kbps.ogg",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, real voice, checked against Person A",
+    "speaker": "a",
+    "source_clip": "a_clip27.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "a_clip27__noise_10db.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, real voice, checked against Person A",
+    "speaker": "a",
+    "source_clip": "a_clip27.wav",
+    "condition": "noise_10db"
+  },
+  {
+    "clip": "a_clip28__telephone_8khz.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, a different recording",
+    "speaker": "a",
+    "source_clip": "a_clip28.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "a_clip28__g711_mulaw.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, a different recording",
+    "speaker": "a",
+    "source_clip": "a_clip28.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "a_clip28__opus_16kbps.ogg",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, a different recording",
+    "speaker": "a",
+    "source_clip": "a_clip28.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "a_clip28__noise_10db.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person A, a different recording",
+    "speaker": "a",
+    "source_clip": "a_clip28.wav",
+    "condition": "noise_10db"
+  },
+  {
+    "clip": "b_clip30__telephone_8khz.wav",
+    "claim": "Person B",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person B, real voice, checked against Person B",
+    "speaker": "b",
+    "source_clip": "b_clip30.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "b_clip30__g711_mulaw.wav",
+    "claim": "Person B",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person B, real voice, checked against Person B",
+    "speaker": "b",
+    "source_clip": "b_clip30.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "b_clip30__opus_16kbps.ogg",
+    "claim": "Person B",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person B, real voice, checked against Person B",
+    "speaker": "b",
+    "source_clip": "b_clip30.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "b_clip30__noise_10db.wav",
+    "claim": "Person B",
+    "voice": "real",
+    "same_person": true,
+    "note": "Person B, real voice, checked against Person B",
+    "speaker": "b",
+    "source_clip": "b_clip30.wav",
+    "condition": "noise_10db"
+  },
+  {
+    "clip": "b_clip30__telephone_8khz.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": false,
+    "note": "Person B pretending to be Person A (real human impostor)",
+    "speaker": "b",
+    "source_clip": "b_clip30.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "b_clip30__g711_mulaw.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": false,
+    "note": "Person B pretending to be Person A (real human impostor)",
+    "speaker": "b",
+    "source_clip": "b_clip30.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "b_clip30__opus_16kbps.ogg",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": false,
+    "note": "Person B pretending to be Person A (real human impostor)",
+    "speaker": "b",
+    "source_clip": "b_clip30.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "b_clip30__noise_10db.wav",
+    "claim": "Person A",
+    "voice": "real",
+    "same_person": false,
+    "note": "Person B pretending to be Person A (real human impostor)",
+    "speaker": "b",
+    "source_clip": "b_clip30.wav",
+    "condition": "noise_10db"
+  },
+  {
+    "clip": "ai_voice__telephone_8khz.wav",
+    "claim": "Person A",
+    "voice": "fake",
+    "same_person": false,
+    "note": "AI-generated voice claiming to be Person A",
+    "speaker": "tts_1",
+    "source_clip": "ai_voice.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "ai_voice__g711_mulaw.wav",
+    "claim": "Person A",
+    "voice": "fake",
+    "same_person": false,
+    "note": "AI-generated voice claiming to be Person A",
+    "speaker": "tts_1",
+    "source_clip": "ai_voice.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "ai_voice__opus_16kbps.ogg",
+    "claim": "Person A",
+    "voice": "fake",
+    "same_person": false,
+    "note": "AI-generated voice claiming to be Person A",
+    "speaker": "tts_1",
+    "source_clip": "ai_voice.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "ai_voice__noise_10db.wav",
+    "claim": "Person A",
+    "voice": "fake",
+    "same_person": false,
+    "note": "AI-generated voice claiming to be Person A",
+    "speaker": "tts_1",
+    "source_clip": "ai_voice.wav",
+    "condition": "noise_10db"
+  },
+  {
+    "clip": "c_real__telephone_8khz.wav",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": true,
+    "note": "Independent genuine clip from enrolled speaker C",
+    "speaker": "c",
+    "source_clip": "c_real.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "c_real__g711_mulaw.wav",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": true,
+    "note": "Independent genuine clip from enrolled speaker C",
+    "speaker": "c",
+    "source_clip": "c_real.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "c_real__opus_16kbps.ogg",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": true,
+    "note": "Independent genuine clip from enrolled speaker C",
+    "speaker": "c",
+    "source_clip": "c_real.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "c_real__noise_10db.wav",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": true,
+    "note": "Independent genuine clip from enrolled speaker C",
+    "speaker": "c",
+    "source_clip": "c_real.wav",
+    "condition": "noise_10db"
+  },
+  {
+    "clip": "d_real__telephone_8khz.wav",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": false,
+    "note": "Permission-cleared speaker D checked against speaker C",
+    "speaker": "d",
+    "source_clip": "d_real.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "d_real__g711_mulaw.wav",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": false,
+    "note": "Permission-cleared speaker D checked against speaker C",
+    "speaker": "d",
+    "source_clip": "d_real.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "d_real__opus_16kbps.ogg",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": false,
+    "note": "Permission-cleared speaker D checked against speaker C",
+    "speaker": "d",
+    "source_clip": "d_real.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "d_real__noise_10db.wav",
+    "claim": "Person C",
+    "voice": "real",
+    "same_person": false,
+    "note": "Permission-cleared speaker D checked against speaker C",
+    "speaker": "d",
+    "source_clip": "d_real.wav",
+    "condition": "noise_10db"
+  },
+  {
+    "clip": "tts_english__telephone_8khz.wav",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf English TTS voice distinct from the original synthetic sample",
+    "speaker": "tts_2",
+    "language": "en",
+    "source_clip": "tts_english.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "tts_english__g711_mulaw.wav",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf English TTS voice distinct from the original synthetic sample",
+    "speaker": "tts_2",
+    "language": "en",
+    "source_clip": "tts_english.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "tts_english__opus_16kbps.ogg",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf English TTS voice distinct from the original synthetic sample",
+    "speaker": "tts_2",
+    "language": "en",
+    "source_clip": "tts_english.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "tts_english__noise_10db.wav",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf English TTS voice distinct from the original synthetic sample",
+    "speaker": "tts_2",
+    "language": "en",
+    "source_clip": "tts_english.wav",
+    "condition": "noise_10db"
+  },
+  {
+    "clip": "tts_hindi__telephone_8khz.wav",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf Hindi TTS voice distinct from both English voices",
+    "speaker": "tts_3",
+    "language": "hi",
+    "source_clip": "tts_hindi.wav",
+    "condition": "telephone_8khz"
+  },
+  {
+    "clip": "tts_hindi__g711_mulaw.wav",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf Hindi TTS voice distinct from both English voices",
+    "speaker": "tts_3",
+    "language": "hi",
+    "source_clip": "tts_hindi.wav",
+    "condition": "g711_mulaw"
+  },
+  {
+    "clip": "tts_hindi__opus_16kbps.ogg",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf Hindi TTS voice distinct from both English voices",
+    "speaker": "tts_3",
+    "language": "hi",
+    "source_clip": "tts_hindi.wav",
+    "condition": "opus_16kbps"
+  },
+  {
+    "clip": "tts_hindi__noise_10db.wav",
+    "claim": null,
+    "voice": "fake",
+    "same_person": null,
+    "note": "Off-the-shelf Hindi TTS voice distinct from both English voices",
+    "speaker": "tts_3",
+    "language": "hi",
+    "source_clip": "tts_hindi.wav",
+    "condition": "noise_10db"
+  }
+]

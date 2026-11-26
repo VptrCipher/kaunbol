@@ -1,0 +1,78 @@
+{
+  "at": 1795621175,
+  "rows": [
+    {
+      "clip": "a_clip27.wav",
+      "claim": "Person A",
+      "note": "Person A, real voice, checked against Person A",
+      "truth_voice": "real",
+      "truth_same": true,
+      "voice": "real",
+      "score": 0.000867,
+      "decision": "match",
+      "similarity": 0.960328,
+      "simulated": false,
+      "voice_ok": true,
+      "identity_ok": true
+    },
+    {
+      "clip": "a_clip28.wav",
+      "claim": "Person A",
+      "note": "Person A, a different recording",
+      "truth_voice": "real",
+      "truth_same": true,
+      "voice": "real",
+      "score": 0.000493,
+      "decision": "match",
+      "similarity": 0.949455,
+      "simulated": false,
+      "voice_ok": true,
+      "identity_ok": true
+    },
+    {
+      "clip": "b_clip30.wav",
+      "claim": "Person B",
+      "note": "Person B, real voice, checked against Person B",
+      "truth_voice": "real",
+      "truth_same": true,
+      "voice": "real",
+      "score": 0.003225,
+      "decision": "match",
+      "similarity": 0.922284,
+      "simulated": false,
+      "voice_ok": true,
+      "identity_ok": true
+    },
+    {
+      "clip": "b_clip30.wav",
+      "claim": "Person A",
+      "note": "Person B pretending to be Person A (real human impostor)",
+      "truth_voice": "real",
+      "truth_same": false,
+      "voice": "real",
+      "score": 0.003225,
+      "decision": "no_match",
+      "similarity": 0.523323,
+      "simulated": false,
+      "voice_ok": true,
+      "identity_ok": true
+    },
+    {
+      "clip": "ai_voice.wav",
+      "claim": "Person A",
+      "note": "AI-generated voice claiming to be Person A",
+      "truth_voice": "fake",
+      "truth_same": false,
+      "voice": "fake",
+      "score": 0.996692,
+      "decision": "no_match",
+      "similarity": 0.054622,
+      "simulated": false,
+      "voice_ok": true,
+      "identity_ok": true
+    }
+  ],
+  "correct": 10,
+  "total": 10,
+  "simulated": false
+}
