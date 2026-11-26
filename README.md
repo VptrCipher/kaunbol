@@ -11,7 +11,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?logo=javascript&logoColor=black)
 ![Prototype](https://img.shields.io/badge/Status-Prototype-B38351)
 
-[Quick start](#start-the-app-on-windows) · [Architecture](docs/ARCHITECTURE.md) · [Live setup](BANK_SETUP.md) · [Benchmark](BENCHMARK.md)
+[Quick start](#start-the-app-on-windows) · [Architecture](docs/ARCHITECTURE.md) · [Integration guide](docs/INTEGRATION.md) · [Live setup](BANK_SETUP.md) · [Benchmark](BENCHMARK.md)
 
 </div>
 
@@ -50,6 +50,7 @@ Read the [architecture guide](docs/ARCHITECTURE.md) for the full component map, 
 - `frontend/`: browser UI, audio helpers, translations and shared styles.
 - [Bank setup](BANK_SETUP.md): live providers, OTP, HTTPS and device rehearsal.
 - [Architecture](docs/ARCHITECTURE.md): component map, approval sequence and module guide.
+- [Integration guide](docs/INTEGRATION.md): API examples, provider configuration, customer handoff and failure handling.
 - [Benchmark](BENCHMARK.md): saved results and how to evaluate consented inputs.
 - [Private data](data/README.md): runtime files intentionally excluded from Git.
 
